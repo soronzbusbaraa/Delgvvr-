@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бөс Барааны Дэлгүүр</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;--accent:#e8b84b;--text:#f0ede6;--text2:#9a9590;--red:#e05a4e;--green:#4eaa6e;--blue:#4e8de0;--purple:#b06ef0;--radius:10px;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
+.logo-title{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.nav{padding:10px 8px;flex:1;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(232,184,75,.12);color:var(--accent);font-weight:600;}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+.nav-section{font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;padding:10px 12px 5px;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--text2);}
+.today-date{font-family:var(--mono);color:var(--accent);font-size:12px;}
+.page-header{padding:18px 24px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.page-title{font-size:19px;font-weight:700;}
+.page-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:var(--font);font-weight:600;transition:all .15s;}
+.btn-primary{background:var(--accent);color:#1a1000;}
+.btn-primary:hover{background:#f0c85a;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--text2);}
+.btn-danger{background:rgba(224,90,78,.15);color:var(--red);border:1px solid rgba(224,90,78,.25);}
+.btn-success{background:rgba(78,170,110,.15);color:var(--green);border:1px solid rgba(78,170,110,.25);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.content{padding:18px 24px 28px;flex:1;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;}
+.stat-value{font-size:20px;font-weight:700;margin-top:5px;font-family:var(--mono);}
+.stat-change{font-size:11px;margin-top:3px;}
+.stat-change.up{color:var(--green);}
+.stat-change.down{color:var(--red);}
+.stat-card.accent-card{border-color:rgba(232,184,75,.3);background:rgba(232,184,75,.06);}
+.stat-card.accent-card .stat-value{color:var(--accent);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:13px;font-weight:600;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;}
+.search-box input{background:none;border:none;color:var(--text);font-size:13px;font-family:var(--font);outline:none;width:160px;}
+.search-box input::placeholder{color:var(--text2);}
+table{width:100%;border-collapse:collapse;}
+th{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);font-weight:500;}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid rgba(46,46,46,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(78,170,110,.15);color:var(--green);}
+.badge-red{background:rgba(224,90,78,.15);color:var(--red);}
+.badge-yellow{background:rgba(232,184,75,.15);color:var(--accent);}
+.badge-blue{background:rgba(78,141,224,.15);color:var(--blue);}
+.badge-purple{background:rgba(176,110,240,.15);color:var(--purple);}
+.mono{font-family:var(--mono);}
+.two-col{display:grid;grid-template-columns:2fr 1fr;gap:12px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:500px;max-width:96vw;max-height:92vh;overflow-y:auto;}
+.modal-sm{width:360px;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px;}
+.modal-close:hover{color:var(--text);background:var(--surface2);}
+.modal-body{padding:20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-weight:500;}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border .15s;}
+.form-input:focus{border-color:var(--accent);}
+select.form-input option{background:var(--surface2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px;}
+.tab{padding:6px 14px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:none;font-family:var(--font);}
+.tab.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+/* КАСС */
+.kass-grid{display:grid;grid-template-columns:1fr 400px;gap:12px;height:calc(100vh - 110px);}
+.kass-items{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;}
+.kass-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;}
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;padding:12px;overflow-y:auto;flex:1;}
+.item-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .15s;}
+.item-btn:hover{border-color:var(--accent);background:rgba(232,184,75,.05);}
+.item-btn.supply-btn{border-style:dashed;}
+.item-name{font-size:11px;font-weight:600;margin-bottom:3px;}
+.item-price{font-size:12px;color:var(--accent);font-family:var(--mono);}
+.item-stock{font-size:10px;color:var(--text2);margin-top:2px;}
+.cart-list{flex:1;overflow-y:auto;padding:8px;}
+.cart-item{display:flex;align-items:center;gap:6px;padding:8px 9px;background:var(--surface2);border-radius:8px;margin-bottom:5px;}
+.cart-item-name{flex:1;font-size:11px;font-weight:500;line-height:1.3;}
+.cart-qty-edit{width:50px;background:var(--border);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;text-align:center;padding:3px 4px;outline:none;}
+.cart-qty-edit:focus{border-color:var(--accent);}
+.cart-unit{font-size:10px;color:var(--text2);}
+.cart-price{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:65px;text-align:right;}
+.cart-total{padding:12px;border-top:1px solid var(--border);}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.total-label{font-size:12px;color:var(--text2);}
+.total-value{font-family:var(--mono);font-size:12px;}
+.grand-total{font-size:17px;font-weight:700;color:var(--accent);}
+/* MIXED PAYMENT */
+.pay-section{background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:10px;}
+.pay-section-title{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;}
+.pay-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.pay-label{font-size:12px;width:110px;flex-shrink:0;}
+.pay-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;text-align:right;}
+.pay-input:focus{border-color:var(--accent);}
+.pay-remaining{display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;border-top:1px solid var(--border);margin-top:6px;}
+.pay-rem-label{font-size:12px;color:var(--text2);}
+.pay-rem-value{font-family:var(--mono);font-size:13px;font-weight:700;}
+.pay-rem-value.zero{color:var(--green);}
+.pay-rem-value.positive{color:var(--red);}
+/* ХАРИЛЦАГЧ */
+.client-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);transition:background .12s;}
+.client-row:hover{background:var(--surface2);}
+.client-avatar{width:34px;height:34px;border-radius:50%;background:rgba(232,184,75,.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.client-info{flex:1;}
+.client-name{font-size:13px;font-weight:600;}
+.client-phone{font-size:11px;color:var(--text2);font-family:var(--mono);}
+.client-debt{font-family:var(--mono);font-size:13px;font-weight:700;}
+.has-debt{color:var(--red);}
+.no-debt{color:var(--green);}
+/* АЖИЛТАН */
+.staff-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.staff-avatar{width:40px;height:40px;border-radius:50%;background:rgba(78,141,224,.15);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--blue);flex-shrink:0;}
+.staff-info{flex:1;}
+.staff-name{font-size:14px;font-weight:600;}
+.staff-role{font-size:11px;color:var(--text2);}
+.staff-salary{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600;}
+/* ИРЦИЙН ТОВЧ */
+.attend-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px;}
+.attend-day{text-align:center;padding:4px 2px;border-radius:6px;font-size:10px;cursor:pointer;border:1px solid var(--border);transition:all .12s;}
+.attend-day.work{background:rgba(78,170,110,.2);border-color:var(--green);color:var(--green);}
+.attend-day.off{background:rgba(224,90,78,.1);border-color:rgba(224,90,78,.3);color:var(--text2);}
+.attend-day:hover{border-color:var(--accent);}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-size:13px;z-index:200;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:var(--green);}
+.toast.error{border-color:var(--red);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.page{display:none;}
+.page.active{display:flex;flex-direction:column;flex:1;}
+.empty-state{text-align:center;padding:36px;color:var(--text2);}
+.empty-icon{font-size:32px;margin-bottom:8px;}
+.empty-text{font-size:13px;}
+.chart-bar-wrap{display:flex;flex-direction:column;gap:7px;padding:4px 0;}
+.chart-row{display:flex;align-items:center;gap:8px;}
+.chart-label{font-size:11px;color:var(--text2);width:85px;text-align:right;flex-shrink:0;}
+.chart-bar-bg{flex:1;background:var(--surface2);border-radius:4px;height:20px;overflow:hidden;}
+.chart-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;font-size:10px;font-weight:600;color:var(--bg);transition:width .6s;}
+.chart-val{font-family:var(--mono);font-size:10px;color:var(--text2);width:80px;}
+.quick-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.quick-btn{flex:1;min-width:44px;padding:6px 3px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--mono);font-size:12px;cursor:pointer;text-align:center;transition:all .12s;}
+.quick-btn:hover{border-color:var(--accent);color:var(--accent);}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-title">🧵 Бөс Систем</div>
+    <div class="logo-sub">Дэлгүүрийн удирдлага</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Үндсэн</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Хянах самбар</div>
+    <div class="nav-item" onclick="showPage('kass',this)"><span class="nav-icon">🛒</span> Касс</div>
+    <div class="nav-section">Бараа</div>
+    <div class="nav-item" onclick="showPage('inventory',this)"><span class="nav-icon">📦</span> Барааны бүртгэл</div>
+    <div class="nav-item" onclick="showPage('supplies',this)"><span class="nav-icon">🛍️</span> Туслах материал</div>
+    <div class="nav-item" onclick="showPage('incoming',this)"><span class="nav-icon">⬇️</span> Орлого</div>
+    <div class="nav-section">Харилцагч</div>
+    <div class="nav-item" onclick="showPage('clients',this)"><span class="nav-icon">👥</span> Харилцагчид</div>
+    <div class="nav-item" onclick="showPage('debt',this)"><span class="nav-icon">💳</span> Зээл & авлага</div>
+    <div class="nav-section">Ажилтан</div>
+    <div class="nav-item" onclick="showPage('staff',this)"><span class="nav-icon">👤</span> Ажилтнууд</div>
+    <div class="nav-item" onclick="showPage('attendance',this)"><span class="nav-icon">📅</span> Ирц бүртгэл</div>
+    <div class="nav-item" onclick="showPage('salary',this)"><span class="nav-icon">💰</span> Цалин</div>
+    <div class="nav-section">Тайлан</div>
+    <div class="nav-item" onclick="showPage('report',this)"><span class="nav-icon">📈</span> Орлого тайлан</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="today-date" id="todayDate"></div>
+    <div style="margin-top:2px;">Сайн ажлын өдөр!</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div><div class="page-title">Хянах самбар</div><div class="page-sub">Өнөөдрийн байдал</div></div>
+    <button class="btn btn-primary" onclick="showPage('kass')">🛒 Касс нээх</button>
+  </div>
+  <div class="content">
+    <div class="stats-grid">
+      <div class="stat-card accent-card"><div class="stat-label">Өнөөдрийн орлого</div><div class="stat-value" id="s-today">₮0</div><div class="stat-change up" id="s-sales-count">0 борлуулалт</div></div>
+      <div class="stat-card"><div class="stat-label">Барааны төрөл</div><div class="stat-value" id="s-products">0</div><div class="stat-change up">Нийт бараа</div></div>
+      <div class="stat-card"><div class="stat-label">Нийт авлага</div><div class="stat-value" style="color:var(--red)" id="s-debt">₮0</div><div class="stat-change down" id="s-debtors">0 харилцагч</div></div>
+      <div class="stat-card"><div class="stat-label">Ажилтан</div><div class="stat-value" id="s-staff">0</div><div class="stat-change up">Өнөөдөр ирсэн</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">📋 Сүүлийн борлуулалт</span></div>
+        <table><thead><tr><th>Бараа</th><th>Дүн</th><th>Төлбөр</th><th>Цаг</th></tr></thead>
+        <tbody id="recent-sales-body"><tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Борлуулалт байхгүй</div></div></td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">⚠️ Дуусах дөхсөн</span></div>
+        <div id="low-stock-list"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Бүх бараа хангалттай</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- КАСС -->
+<div class="page" id="page-kass">
+  <div class="page-header">
+    <div><div class="page-title">Касс</div><div class="page-sub">Борлуулалт бүртгэх</div></div>
+    <div class="search-box"><span>🔍</span><input type="text" placeholder="Бараа хайх..." id="kass-search" oninput="filterKassItems()"></div>
+  </div>
+  <div class="content" style="padding-bottom:0;">
+    <div class="kass-grid">
+      <div class="kass-items">
+        <div class="card-header"><span class="card-title">Барааны жагсаалт</span><span id="kass-count" style="font-size:11px;color:var(--text2)"></span></div>
+        <div class="items-grid" id="kass-grid"></div>
+      </div>
+      <div class="kass-panel">
+        <div class="card-header"><span class="card-title">🧾 Тооцоо</span><button class="btn btn-ghost btn-sm" onclick="clearCart()">Цэвэрлэх</button></div>
+        <div class="cart-list" id="cart-list"><div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Бараа нэмнэ үү</div></div></div>
+        <div class="cart-total">
+          <div class="total-row"><span class="total-label">Нийт дүн:</span><span class="grand-total" id="cart-total">₮0</span></div>
+          <div class="divider"></div>
+          <!-- MIXED PAYMENT -->
+          <div class="pay-section">
+            <div class="pay-section-title">💳 Төлбөрийн хуваарилалт</div>
+            <div class="pay-row"><span class="pay-label">💵 Бэлэн:</span><input class="pay-input" id="pay-cash" type="number" placeholder="0" oninput="updatePayRemaining()"></div>
+            <div class="pay-row"><span class="pay-label">🏦 Khan Bank:</span><input class="pay-input" id="pay-pos" type="number" placeholder="0" oninput="updatePayRemaining()"></div>
+            <div class="pay-row"><span class="pay-label">📱 QPay:</span><input class="pay-input" id="pay-qpay" type="number" placeholder="0" oninput="updatePayRemaining()"></div>
+            <div class="pay-row">
+              <span class="pay-label">📋 Зээл:</span>
+              <input class="pay-input" id="pay-debt" type="number" placeholder="0" oninput="updatePayRemaining();toggleDebtClient()">
+            </div>
+            <div id="debt-client-wrap" style="display:none;margin-top:6px;">
+              <select class="form-input" id="debt-client-select" style="font-size:12px;"></select>
+            </div>
+            <div class="pay-remaining">
+              <span class="pay-rem-label">Үлдэгдэл:</span>
+              <span class="pay-rem-value" id="pay-remaining">₮0</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="completeSale()">✅ Борлуулалт баталгаажуулах</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- БАРАА БҮРТГЭЛ -->
+<div class="page" id="page-inventory">
+  <div class="page-header">
+    <div><div class="page-title">Барааны бүртгэл</div><div class="page-sub">Даавуу болон бүс бараа</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-product')">+ Бараа нэмэх</button>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Бүх бараа</span><div class="search-box"><span>🔍</span><input type="text" placeholder="Хайх..." id="inv-search" oninput="filterInventory()"></div></div>
+      <table><thead><tr><th>Нэр</th><th>Ангилал</th><th>Зарах үнэ</th><th>Авалт үнэ</th><th>Нөөц</th><th>Статус</th><th></th></tr></thead>
+      <tbody id="inventory-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ТУСЛАХ МАТЕРИАЛ -->
+<div class="page" id="page-supplies">
+  <div class="page-header">
+    <div><div class="page-title">Туслах материал</div><div class="page-sub">Тор, нойлийн цаас, гялгар уут гэх мэт</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-supply')">+ Материал нэмэх</button>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Материалын жагсаалт</span></div>
+      <table><thead><tr><th>Нэр</th><th>Нэгж</th><th>Зарах үнэ</th><th>Нөөц</th><th>Дараагийн захиалга</th><th>Статус</th><th></th></tr></thead>
+      <tbody id="supplies-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ОРЛОГО -->
+<div class="page" id="page-incoming">
+  <div class="page-header">
+    <div><div class="page-title">Орлого бүртгэл</div><div class="page-sub">Бараа ирсэн бүртгэл</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-incoming')">+ Орлого бүртгэх</button>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Орлогын түүх</span></div>
+      <table><thead><tr><th>Огноо</th><th>Бараа</th><th>Тоо хэмжээ</th><th>Нэгж үнэ</th><th>Нийт</th><th>Нийлүүлэгч</th></tr></thead>
+      <tbody id="incoming-body"><tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-text">Орлого байхгүй</div></div></td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ХАРИЛЦАГЧ -->
+<div class="page" id="page-clients">
+  <div class="page-header">
+    <div><div class="page-title">Харилцагчид</div><div class="page-sub">Зээл, авлагын удирдлага</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-client')">+ Харилцагч нэмэх</button>
+  </div>
+  <div class="content"><div class="card" id="client-list"></div></div>
+</div>
+
+<!-- ЗЭЭЛ -->
+<div class="page" id="page-debt">
+  <div class="page-header"><div><div class="page-title">Зээл & Авлага</div><div class="page-sub">Төлөгдөөгүй авлага</div></div></div>
+  <div class="content">
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Нийт авлага</div><div class="stat-value" style="color:var(--red)" id="debt-total">₮0</div></div>
+      <div class="stat-card"><div class="stat-label">Авлагатай харилцагч</div><div class="stat-value" id="debt-count">0</div></div>
+      <div class="stat-card"><div class="stat-label">Дундаж авлага</div><div class="stat-value" id="debt-avg">₮0</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Авлагын дэлгэрэнгүй</span></div>
+      <table><thead><tr><th>Харилцагч</th><th>Утас</th><th>Авлага</th><th>Үйлдэл</th></tr></thead>
+      <tbody id="debt-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- АЖИЛТАН -->
+<div class="page" id="page-staff">
+  <div class="page-header">
+    <div><div class="page-title">Ажилтнууд</div><div class="page-sub">Ажилтны мэдээлэл</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-staff')">+ Ажилтан нэмэх</button>
+  </div>
+  <div class="content"><div id="staff-list"></div></div>
+</div>
+
+<!-- ИРЦИЙН БҮРТГЭЛ -->
+<div class="page" id="page-attendance">
+  <div class="page-header">
+    <div><div class="page-title">Ирц бүртгэл</div><div class="page-sub">Ажилсан / амарсан өдрийн бүртгэл</div></div>
+  </div>
+  <div class="content">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">📅 <span id="attend-month-label"></span></span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick="changeAttendMonth(-1)">◀</button>
+          <button class="btn btn-ghost btn-sm" onclick="changeAttendMonth(1)">▶</button>
+        </div>
+      </div>
+      <div style="padding:14px;" id="attendance-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЦАЛИН -->
+<div class="page" id="page-salary">
+  <div class="page-header">
+    <div><div class="page-title">Цалингийн бүртгэл</div><div class="page-sub">Цалин тооцоолол</div></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Цалингийн хуваарь</span></div>
+      <table><thead><tr><th>Ажилтан</th><th>Үндсэн цалин</th><th>Ажилсан өдөр</th><th>Тооцоолсон цалин</th><th>Төлсөн</th><th>Үлдэгдэл</th><th>Үйлдэл</th></tr></thead>
+      <tbody id="salary-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ТАЙЛАН -->
+<div class="page" id="page-report">
+  <div class="page-header"><div><div class="page-title">Орлого тайлан</div><div class="page-sub">Борлуулалт ба ашиг шинжилгээ</div></div></div>
+  <div class="content">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'tab-daily')">Өдрийн</button>
+      <button class="tab" onclick="switchTab(this,'tab-weekly')">7 хоног</button>
+      <button class="tab" onclick="switchTab(this,'tab-top')">Шилдэг бараа</button>
+      <button class="tab" onclick="switchTab(this,'tab-payment')">Төлбөрийн хэлбэр</button>
+    </div>
+    <div id="tab-daily">
+      <div class="stats-grid">
+        <div class="stat-card accent-card"><div class="stat-label">Орлого</div><div class="stat-value" id="r-income">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">Зардал</div><div class="stat-value" id="r-cost">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">Ашиг</div><div class="stat-value" style="color:var(--green)" id="r-profit">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">Борлуулалт</div><div class="stat-value" id="r-count">0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Өнөөдрийн борлуулалт</span></div>
+        <table><thead><tr><th>Цаг</th><th>Бараа</th><th>Метр</th><th>Орлого</th><th>Ашиг</th><th>Бэлэн</th><th>POS</th><th>QPay</th><th>Зээл</th></tr></thead>
+        <tbody id="report-body"><tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Борлуулалт байхгүй</div></div></td></tr></tbody></table>
+      </div>
+    </div>
+    <div id="tab-weekly" style="display:none;">
+      <div class="card"><div class="card-header"><span class="card-title">7 хоногийн орлого</span></div><div style="padding:14px;" id="weekly-chart"></div></div>
+    </div>
+    <div id="tab-top" style="display:none;">
+      <div class="card"><div class="card-header"><span class="card-title">Шилдэг бараа</span></div><div style="padding:14px;" id="top-chart"></div></div>
+    </div>
+    <div id="tab-payment" style="display:none;">
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="stat-label">💵 Бэлэн</div><div class="stat-value" id="r-cash">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">🏦 Khan Bank</div><div class="stat-value" id="r-pos">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">📱 QPay</div><div class="stat-value" id="r-qpay">₮0</div></div>
+        <div class="stat-card"><div class="stat-label">📋 Зээл</div><div class="stat-value" style="color:var(--red)" id="r-debtamt">₮0</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></div>
+
+<!-- MODALS -->
+<!-- Хэмжээ оруулах -->
+<div class="modal-overlay" id="modal-qty">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">📏 Хэмжээ оруулах</span><button class="modal-close" onclick="closeModal('modal-qty')">×</button></div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;" id="qty-pname"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Нөөц: <span id="qty-stock" class="mono" style="color:var(--accent);"></span> &nbsp;|&nbsp; <span id="qty-price" style="color:var(--accent);"></span></div>
+      </div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label class="form-label">Метр хэмжээ</label>
+        <input class="form-input" id="qty-input" type="number" step="0.1" min="0.1" placeholder="0.0" style="font-size:20px;text-align:center;font-family:var(--mono);padding:10px;" oninput="updateQtyTotal()">
+      </div>
+      <div id="qty-total" style="text-align:center;font-family:var(--mono);font-size:14px;color:var(--accent);margin-bottom:8px;"></div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setQty(0.5)">0.5м</button>
+        <button class="quick-btn" onclick="setQty(1)">1м</button>
+        <button class="quick-btn" onclick="setQty(1.5)">1.5м</button>
+        <button class="quick-btn" onclick="setQty(2)">2м</button>
+        <button class="quick-btn" onclick="setQty(2.5)">2.5м</button>
+        <button class="quick-btn" onclick="setQty(3)">3м</button>
+        <button class="quick-btn" onclick="setQty(5)">5м</button>
+        <button class="quick-btn" onclick="setQty(10)">10м</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-qty')">Болих</button>
+      <button class="btn btn-primary" onclick="confirmQty()">✅ Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Туслах материал хэмжээ -->
+<div class="modal-overlay" id="modal-supply-qty">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">🛍️ Тоо оруулах</span><button class="modal-close" onclick="closeModal('modal-supply-qty')">×</button></div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;" id="sqty-pname"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;"><span id="sqty-price" style="color:var(--accent);"></span></div>
+      </div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label class="form-label">Тоо хэмжээ</label>
+        <input class="form-input" id="sqty-input" type="number" step="1" min="1" placeholder="0" style="font-size:20px;text-align:center;font-family:var(--mono);padding:10px;" oninput="updateSQtyTotal()">
+      </div>
+      <div id="sqty-total" style="text-align:center;font-family:var(--mono);font-size:14px;color:var(--accent);margin-bottom:8px;"></div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setSQty(1)">1</button>
+        <button class="quick-btn" onclick="setSQty(2)">2</button>
+        <button class="quick-btn" onclick="setSQty(5)">5</button>
+        <button class="quick-btn" onclick="setSQty(10)">10</button>
+        <button class="quick-btn" onclick="setSQty(20)">20</button>
+        <button class="quick-btn" onclick="setSQty(50)">50</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-supply-qty')">Болих</button>
+      <button class="btn btn-primary" onclick="confirmSQty()">✅ Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Бараа нэмэх -->
+<div class="modal-overlay" id="modal-add-product">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">📦 Бараа нэмэх</span><button class="modal-close" onclick="closeModal('modal-add-product')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Барааны нэр *</label><input class="form-input" id="p-name" placeholder="Жишээ: Улаан даавуу"></div>
+      <div class="form-group"><label class="form-label">Ангилал</label><select class="form-input" id="p-cat"><option>Даавуу</option><option>Торго</option><option>Ноос</option><option>Хөвөн</option><option>Бусад</option></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Авалт үнэ (₮/м)</label><input class="form-input" id="p-cost" type="number" step="any" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Зарах үнэ (₮/м)</label><input class="form-input" id="p-price" type="number" step="any" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Анхны нөөц (м)</label><input class="form-input" id="p-stock" type="number" step="any" placeholder="0" value="0"></div>
+        <div class="form-group"><label class="form-label">Дохиоллын хэмжээ (м)</label><input class="form-input" id="p-min" type="number" step="any" placeholder="5" value="5"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-product')">Болих</button>
+      <button class="btn btn-primary" onclick="addProduct()">Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Туслах материал нэмэх -->
+<div class="modal-overlay" id="modal-add-supply">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">🛍️ Туслах материал нэмэх</span><button class="modal-close" onclick="closeModal('modal-add-supply')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Нэр *</label><input class="form-input" id="sup-name" placeholder="Жишээ: Нойлийн цаас"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Нэгж</label><select class="form-input" id="sup-unit"><option>ширхэг</option><option>боодол</option><option>хайрцаг</option><option>метр</option><option>кг</option></select></div>
+        <div class="form-group"><label class="form-label">Захиалах давтамж</label><select class="form-input" id="sup-freq"><option value="7">7 хоног бүр</option><option value="10">10 хоног бүр</option><option value="14">14 хоног бүр</option><option value="30">Сар бүр</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Зарах үнэ *</label><input class="form-input" id="sup-price" type="number" step="any" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Авалт үнэ</label><input class="form-input" id="sup-cost" type="number" step="any" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Анхны нөөц</label><input class="form-input" id="sup-stock" type="number" placeholder="0" value="0"></div>
+        <div class="form-group"><label class="form-label">Дохиоллын хэмжээ</label><input class="form-input" id="sup-min" type="number" placeholder="5" value="5"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-supply')">Болих</button>
+      <button class="btn btn-primary" onclick="addSupply()">Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Харилцагч нэмэх -->
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">👤 Харилцагч нэмэх</span><button class="modal-close" onclick="closeModal('modal-add-client')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Нэр *</label><input class="form-input" id="c-name" placeholder="Харилцагчийн нэр"></div>
+      <div class="form-group"><label class="form-label">Утас</label><input class="form-input" id="c-phone" placeholder="9999-9999" type="tel"></div>
+      <div class="form-group"><label class="form-label">Анхны авлага (₮)</label><input class="form-input" id="c-debt" type="number" placeholder="0" value="0"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-client')">Болих</button>
+      <button class="btn btn-primary" onclick="addClient()">Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Авлага төлүүлэх -->
+<div class="modal-overlay" id="modal-pay-debt">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">💳 Авлага төлүүлэх</span><button class="modal-close" onclick="closeModal('modal-pay-debt')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Харилцагч</label><input class="form-input" id="pd-name" readonly></div>
+      <div class="form-group"><label class="form-label">Одоогийн авлага</label><input class="form-input mono" id="pd-current" readonly></div>
+      <div class="form-group"><label class="form-label">Төлсөн дүн (₮)</label><input class="form-input" id="pd-amount" type="number" placeholder="0"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-pay-debt')">Болих</button>
+      <button class="btn btn-success" onclick="payDebt()">✅ Баталгаажуулах</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ажилтан нэмэх -->
+<div class="modal-overlay" id="modal-add-staff">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">👤 Ажилтан нэмэх</span><button class="modal-close" onclick="closeModal('modal-add-staff')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Нэр *</label><input class="form-input" id="st-name" placeholder="Ажилтны нэр"></div>
+      <div class="form-group"><label class="form-label">Албан тушаал</label><input class="form-input" id="st-role" placeholder="Жишээ: Худалдагч"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Үндсэн цалин (₮)</label><input class="form-input" id="st-salary" type="number" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Утас</label><input class="form-input" id="st-phone" placeholder="9999-9999" type="tel"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-staff')">Болих</button>
+      <button class="btn btn-primary" onclick="addStaff()">Нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Цалин төлөх -->
+<div class="modal-overlay" id="modal-pay-salary">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">💰 Цалин төлөх</span><button class="modal-close" onclick="closeModal('modal-pay-salary')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Ажилтан</label><input class="form-input" id="ps-name" readonly></div>
+      <div class="form-group"><label class="form-label">Тооцоолсон цалин</label><input class="form-input mono" id="ps-calc" readonly></div>
+      <div class="form-group"><label class="form-label">Төлөх дүн (₮)</label><input class="form-input" id="ps-amount" type="number" placeholder="0"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-pay-salary')">Болих</button>
+      <button class="btn btn-success" onclick="paySalary()">✅ Төлөх</button>
+    </div>
+  </div>
+</div>
+
+<!-- Орлого -->
+<div class="modal-overlay" id="modal-incoming">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">⬇️ Орлого бүртгэх</span><button class="modal-close" onclick="closeModal('modal-incoming')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Бараа *</label><select class="form-input" id="inc-product"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Тоо хэмжээ *</label><input class="form-input" id="inc-qty" type="number" step="any" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Нэгж үнэ (₮) *</label><input class="form-input" id="inc-cost" type="number" step="any" placeholder="0"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Нийлүүлэгч</label><input class="form-input" id="inc-supplier" placeholder="Нийлүүлэгчийн нэр"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-incoming')">Болих</button>
+      <button class="btn btn-primary" onclick="addIncoming()">Бүртгэх</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== STATE =====================
+let S = {
+  products:[
+    {id:1,name:'Улаан даавуу',cat:'Даавуу',cost:4500,price:7000,stock:45,minStock:5},
+    {id:2,name:'Цагаан торго',cat:'Торго',cost:8000,price:13000,stock:28,minStock:5},
+    {id:3,name:'Цэнхэр хөвөн',cat:'Хөвөн',cost:3200,price:5500,stock:8,minStock:10},
+    {id:4,name:'Ногоон ноос',cat:'Ноос',cost:6000,price:9500,stock:3,minStock:5},
+    {id:5,name:'Шар торго',cat:'Торго',cost:7500,price:12000,stock:20,minStock:5},
+  ],
+  supplies:[
+    {id:1,name:'Нойлийн цаас',unit:'боодол',price:2000,cost:1500,stock:15,minStock:5,freq:7},
+    {id:2,name:'Гялгар уут',unit:'ширхэг',price:500,cost:300,stock:80,minStock:20,freq:10},
+    {id:3,name:'Хайчны тор',unit:'ширхэг',price:1500,cost:1000,stock:8,minStock:3,freq:14},
+  ],
+  clients:[
+    {id:1,name:'Болд Бат',phone:'9911-2233',debt:0},
+    {id:2,name:'Оюун Дорж',phone:'9944-5566',debt:85000},
+    {id:3,name:'Сарнай Ган',phone:'9977-8899',debt:0},
+  ],
+  staff:[
+    {id:1,name:'Нарантуяа',role:'Худалдагч',salary:800000,phone:'9900-0001',paidSalary:0},
+    {id:2,name:'Батжаргал',role:'Худалдагч',salary:750000,phone:'9900-0002',paidSalary:0},
+  ],
+  attendance:{},
+  sales:[],
+  incoming:[],
+  cart:[],
+  nProd:6,nSup:4,nClient:4,nStaff:3,
+  qtyProdId:null,qtyIsSupply:false,
+  payDebtClientId:null,
+  paySalaryStaffId:null,
+  attendMonth: new Date().getMonth(),
+  attendYear: new Date().getFullYear(),
+};
+
+// ===================== LOCALSTORAGE =====================
+function saveState(){try{localStorage.setItem('delguur_v2',JSON.stringify(S));}catch(e){}}
+function loadState(){
+  try{
+    const d=localStorage.getItem('delguur_v2');
+    if(d){const p=JSON.parse(d);Object.assign(S,p);}
+  }catch(e){}
+}
+
+// ===================== FORMAT =====================
+function fmt(n){return '₮'+(Math.round(n)||0).toLocaleString();}
+function fmtM(n){return (Math.round((n||0)*100)/100)+'м';}
+function timeNow(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function dateNow(){return new Date().toLocaleDateString('mn-MN');}
+function monthKey(y,m){return y+'-'+(m+1);}
+
+// ===================== NAV =====================
+function showPage(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el) el.classList.add('active');
+  const r={dashboard:renderDashboard,inventory:renderInventory,kass:renderKass,clients:renderClients,debt:renderDebt,report:renderReport,incoming:renderIncoming,supplies:renderSupplies,staff:renderStaff,attendance:renderAttendance,salary:renderSalary};
+  if(r[page]) r[page]();
+}
+
+// ===================== DASHBOARD =====================
+function renderDashboard(){
+  const today=dateNow();
+  const ts=S.sales.filter(s=>s.date===today);
+  const todayIncome=ts.reduce((a,s)=>a+s.total,0);
+  const totalDebt=S.clients.reduce((a,c)=>a+c.debt,0);
+  const debtors=S.clients.filter(c=>c.debt>0).length;
+  const todayAttend=Object.values(S.attendance).filter(a=>a[today]==='work').length;
+  document.getElementById('s-today').textContent=fmt(todayIncome);
+  document.getElementById('s-sales-count').textContent=ts.length+' борлуулалт';
+  document.getElementById('s-products').textContent=S.products.length;
+  document.getElementById('s-debt').textContent=fmt(totalDebt);
+  document.getElementById('s-debtors').textContent=debtors+' харилцагч';
+  document.getElementById('s-staff').textContent=todayAttend+'/'+S.staff.length;
+  const ptypes={cash:'💵',pos:'🏦',qpay:'📱',debt:'📋'};
+  const tbody=document.getElementById('recent-sales-body');
+  if(ts.length===0){tbody.innerHTML='<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Борлуулалт байхгүй</div></div></td></tr>';}
+  else{tbody.innerHTML=ts.slice(-6).reverse().map(s=>{
+    const pays=[];
+    if(s.cash>0)pays.push('💵'+fmt(s.cash));
+    if(s.pos>0)pays.push('🏦'+fmt(s.pos));
+    if(s.qpay>0)pays.push('📱'+fmt(s.qpay));
+    if(s.debtAmt>0)pays.push('📋'+fmt(s.debtAmt));
+    return`<tr><td>${s.items.map(i=>i.name).join(', ')}</td><td class="mono" style="color:var(--accent)">${fmt(s.total)}</td><td style="font-size:11px;">${pays.join(' ')}</td><td class="mono" style="color:var(--text2)">${s.time}</td></tr>`;
+  }).join('');}
+  const low=[...S.products,...S.supplies].filter(p=>p.stock<=p.minStock);
+  const lowDiv=document.getElementById('low-stock-list');
+  lowDiv.innerHTML=low.length===0?'<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Бүх бараа хангалттай</div></div>':
+    low.map(p=>`<div style="padding:9px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:12px;font-weight:600;">${p.name}</div></div><span class="badge badge-red">${p.stock} үлдсэн</span></div>`).join('');
+}
+
+// ===================== INVENTORY =====================
+function renderInventory(filter=''){
+  const prods=filter?S.products.filter(p=>p.name.toLowerCase().includes(filter.toLowerCase())):S.products;
+  const tbody=document.getElementById('inventory-body');
+  if(!prods.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-text">Бараа олдсонгүй</div></div></td></tr>';return;}
+  tbody.innerHTML=prods.map(p=>{
+    let st,badge;
+    if(p.stock===0){st='Дууссан';badge='badge-red';}
+    else if(p.stock<=p.minStock){st='Бага';badge='badge-yellow';}
+    else{st='Хангалттай';badge='badge-green';}
+    return`<tr><td><strong>${p.name}</strong></td><td><span class="badge badge-blue">${p.cat}</span></td><td class="mono">${fmt(p.price)}</td><td class="mono" style="color:var(--text2)">${fmt(p.cost)}</td><td class="mono">${fmtM(p.stock)}</td><td><span class="badge ${badge}">${st}</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Устгах</button></td></tr>`;
+  }).join('');
+}
+function filterInventory(){renderInventory(document.getElementById('inv-search').value);}
+function addProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const cost=parseFloat(document.getElementById('p-cost').value)||0;
+  const price=parseFloat(document.getElementById('p-price').value)||0;
+  const stock=parseFloat(document.getElementById('p-stock').value)||0;
+  const minStock=parseFloat(document.getElementById('p-min').value)||5;
+  const cat=document.getElementById('p-cat').value;
+  if(!name||!price){showToast('Нэр болон үнэ оруулна уу!','error');return;}
+  S.products.push({id:S.nProd++,name,cat,cost,price,stock,minStock});
+  closeModal('modal-add-product');renderInventory();updateSelects();saveState();
+  showToast('✅ Бараа нэмэгдлээ!','success');
+  ['p-name','p-cost','p-price'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-stock').value='0';
+}
+function deleteProduct(id){
+  if(!confirm('Устгах уу?'))return;
+  S.products=S.products.filter(p=>p.id!==id);
+  renderInventory();saveState();showToast('Устгагдлаа','error');
+}
+
+// ===================== ТУСЛАХ МАТЕРИАЛ =====================
+function renderSupplies(){
+  const tbody=document.getElementById('supplies-body');
+  if(!S.supplies.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🛍️</div><div class="empty-text">Материал байхгүй</div></div></td></tr>';return;}
+  tbody.innerHTML=S.supplies.map(p=>{
+    let st,badge;
+    if(p.stock===0){st='Дууссан';badge='badge-red';}
+    else if(p.stock<=p.minStock){st='Бага';badge='badge-yellow';}
+    else{st='Хангалттай';badge='badge-green';}
+    return`<tr><td><strong>${p.name}</strong></td><td>${p.unit}</td><td class="mono">${fmt(p.price)}</td><td class="mono">${p.stock} ${p.unit}</td><td><span class="badge badge-blue">${p.freq} хоног бүр</span></td><td><span class="badge ${badge}">${st}</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteSupply(${p.id})">Устгах</button></td></tr>`;
+  }).join('');
+}
+function addSupply(){
+  const name=document.getElementById('sup-name').value.trim();
+  const price=parseFloat(document.getElementById('sup-price').value)||0;
+  const cost=parseFloat(document.getElementById('sup-cost').value)||0;
+  const stock=parseInt(document.getElementById('sup-stock').value)||0;
+  const minStock=parseInt(document.getElementById('sup-min').value)||5;
+  const unit=document.getElementById('sup-unit').value;
+  const freq=parseInt(document.getElementById('sup-freq').value);
+  if(!name||!price){showToast('Нэр болон үнэ оруулна уу!','error');return;}
+  S.supplies.push({id:S.nSup++,name,unit,price,cost,stock,minStock,freq});
+  closeModal('modal-add-supply');renderSupplies();saveState();
+  showToast('✅ Материал нэмэгдлээ!','success');
+  document.getElementById('sup-name').value='';document.getElementById('sup-price').value='';
+}
+function deleteSupply(id){
+  if(!confirm('Устгах уу?'))return;
+  S.supplies=S.supplies.filter(p=>p.id!==id);
+  renderSupplies();saveState();showToast('Устгагдлаа','error');
+}
+
+// ===================== КАСС =====================
+function renderKass(){renderKassItems();renderCart();updateDebtClientSelect();}
+function renderKassItems(filter=''){
+  const allItems=[
+    ...S.products.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase())).map(p=>({...p,isSupply:false})),
+    ...S.supplies.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase())).map(p=>({...p,isSupply:true})),
+  ];
+  const grid=document.getElementById('kass-grid');
+  document.getElementById('kass-count').textContent=allItems.length+' бараа';
+  grid.innerHTML=allItems.map(p=>`
+    <div class="item-btn${p.isSupply?' supply-btn':''}" onclick="${p.isSupply?'openSQtyModal':'openQtyModal'}(${p.id})" style="${p.stock===0?'opacity:.4;pointer-events:none;':''}">
+      <div class="item-name">${p.name}</div>
+      <div class="item-price">${fmt(p.price)}/${p.isSupply?p.unit:'м'}</div>
+      <div class="item-stock">${p.stock}${p.isSupply?' '+p.unit:' нөөц'}</div>
+    </div>`).join('');
+}
+function filterKassItems(){renderKassItems(document.getElementById('kass-search').value);}
+
+// QTY MODAL
+function openQtyModal(id){
+  const p=S.products.find(x=>x.id===id);if(!p)return;
+  S.qtyProdId=id;S.qtyIsSupply=false;
+  document.getElementById('qty-pname').textContent=p.name;
+  document.getElementById('qty-stock').textContent=fmtM(p.stock);
+  document.getElementById('qty-price').textContent=fmt(p.price)+'/м';
+  document.getElementById('qty-input').value='';
+  document.getElementById('qty-total').textContent='';
+  openModal('modal-qty');setTimeout(()=>document.getElementById('qty-input').focus(),200);
+}
+function openSQtyModal(id){
+  const p=S.supplies.find(x=>x.id===id);if(!p)return;
+  S.qtyProdId=id;S.qtyIsSupply=true;
+  document.getElementById('sqty-pname').textContent=p.name;
+  document.getElementById('sqty-price').textContent=fmt(p.price)+'/'+p.unit;
+  document.getElementById('sqty-input').value='';
+  document.getElementById('sqty-total').textContent='';
+  openModal('modal-supply-qty');setTimeout(()=>document.getElementById('sqty-input').focus(),200);
+}
+function setQty(v){document.getElementById('qty-input').value=v;updateQtyTotal();}
+function setSQty(v){document.getElementById('sqty-input').value=v;updateSQtyTotal();}
+function updateQtyTotal(){
+  const p=S.products.find(x=>x.id===S.qtyProdId);
+  const v=parseFloat(document.getElementById('qty-input').value)||0;
+  document.getElementById('qty-total').textContent=p&&v>0?'Нийт: '+fmt(p.price*v):'';
+}
+function updateSQtyTotal(){
+  const p=S.supplies.find(x=>x.id===S.qtyProdId);
+  const v=parseFloat(document.getElementById('sqty-input').value)||0;
+  document.getElementById('sqty-total').textContent=p&&v>0?'Нийт: '+fmt(p.price*v):'';
+}
+function confirmQty(){
+  const qty=parseFloat(document.getElementById('qty-input').value);
+  if(!qty||qty<=0){showToast('Хэмжээ оруулна уу!','error');return;}
+  const p=S.products.find(x=>x.id===S.qtyProdId);if(!p)return;
+  if(qty>p.stock){showToast('Нөөц хүрэлцэхгүй!','error');return;}
+  addToCart(p.id,qty,false,p.name,p.price,p.cost,'м');
+  closeModal('modal-qty');showToast('✅ '+p.name+' '+fmtM(qty),'success');
+}
+function confirmSQty(){
+  const qty=parseFloat(document.getElementById('sqty-input').value);
+  if(!qty||qty<=0){showToast('Тоо оруулна уу!','error');return;}
+  const p=S.supplies.find(x=>x.id===S.qtyProdId);if(!p)return;
+  if(qty>p.stock){showToast('Нөөц хүрэлцэхгүй!','error');return;}
+  addToCart('sup_'+p.id,qty,true,p.name,p.price,p.cost,p.unit);
+  closeModal('modal-supply-qty');showToast('✅ '+p.name+' '+qty+p.unit,'success');
+}
+function addToCart(productId,qty,isSupply,name,price,cost,unit){
+  const existing=S.cart.find(x=>x.productId===productId);
+  if(existing){existing.qty=Math.round((existing.qty+qty)*100)/100;}
+  else{S.cart.push({productId,qty,isSupply,name,price,cost,unit});}
+  renderCart();updatePayRemaining();
+}
+function updateCartQty(productId,val){
+  const qty=parseFloat(val);
+  const item=S.cart.find(x=>x.productId===productId);
+  if(!item)return;
+  if(!qty||qty<=0){S.cart=S.cart.filter(x=>x.productId!==productId);}
+  else{item.qty=Math.round(qty*100)/100;}
+  renderCart();updatePayRemaining();
+}
+function removeCartItem(productId){S.cart=S.cart.filter(x=>x.productId!==productId);renderCart();updatePayRemaining();}
+function renderCart(){
+  const list=document.getElementById('cart-list');
+  if(!S.cart.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-text">Бараа нэмнэ үү</div></div>';document.getElementById('cart-total').textContent='₮0';return;}
+  list.innerHTML=S.cart.map(item=>`
+    <div class="cart-item">
+      <div class="cart-item-name">${item.name}</div>
+      <input class="cart-qty-edit" type="number" step="${item.isSupply?'1':'0.1'}" min="${item.isSupply?'1':'0.1'}" value="${item.qty}" onchange="updateCartQty('${item.productId}',this.value)">
+      <span class="cart-unit">${item.unit}</span>
+      <div class="cart-price">${fmt(item.price*item.qty)}</div>
+      <button onclick="removeCartItem('${item.productId}')" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:0 2px;">×</button>
+    </div>`).join('');
+  const total=S.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  document.getElementById('cart-total').textContent=fmt(total);
+}
+function clearCart(){S.cart=[];renderCart();updatePayRemaining();['pay-cash','pay-pos','pay-qpay','pay-debt'].forEach(id=>document.getElementById(id).value='');}
+
+// MIXED PAYMENT
+function updatePayRemaining(){
+  const total=S.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const cash=parseFloat(document.getElementById('pay-cash').value)||0;
+  const pos=parseFloat(document.getElementById('pay-pos').value)||0;
+  const qpay=parseFloat(document.getElementById('pay-qpay').value)||0;
+  const debt=parseFloat(document.getElementById('pay-debt').value)||0;
+  const paid=cash+pos+qpay+debt;
+  const rem=total-paid;
+  const el=document.getElementById('pay-remaining');
+  el.textContent=fmt(Math.abs(rem));
+  el.className='pay-rem-value '+(rem<=0?'zero':'positive');
+}
+function toggleDebtClient(){
+  const debt=parseFloat(document.getElementById('pay-debt').value)||0;
+  document.getElementById('debt-client-wrap').style.display=debt>0?'block':'none';
+}
+function completeSale(){
+  if(!S.cart.length){showToast('Тооцоонд бараа байхгүй!','error');return;}
+  const total=S.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const cost=S.cart.reduce((a,i)=>a+i.cost*i.qty,0);
+  const cash=parseFloat(document.getElementById('pay-cash').value)||0;
+  const pos=parseFloat(document.getElementById('pay-pos').value)||0;
+  const qpay=parseFloat(document.getElementById('pay-qpay').value)||0;
+  const debtAmt=parseFloat(document.getElementById('pay-debt').value)||0;
+  const paid=cash+pos+qpay+debtAmt;
+  if(paid<total){showToast('Төлбөр дутуу байна! ₮'+Math.round(total-paid).toLocaleString()+' дутуу','error');return;}
+  if(debtAmt>0){
+    const clientId=parseInt(document.getElementById('debt-client-select').value);
+    if(!clientId){showToast('Зээлд бичих харилцагч сонгоно уу!','error');return;}
+    const c=S.clients.find(x=>x.id===clientId);
+    if(c) c.debt+=debtAmt;
+  }
+  S.cart.forEach(item=>{
+    if(item.isSupply){const p=S.supplies.find(x=>'sup_'+x.id===item.productId);if(p)p.stock=Math.round((p.stock-item.qty)*100)/100;}
+    else{const p=S.products.find(x=>x.id===item.productId);if(p)p.stock=Math.round((p.stock-item.qty)*100)/100;}
+  });
+  S.sales.push({date:dateNow(),time:timeNow(),items:S.cart.map(i=>({name:i.name,qty:i.qty,unit:i.unit,price:i.price})),total,cost,cash,pos,qpay,debtAmt});
+  S.cart=[];
+  renderCart();renderKassItems();
+  ['pay-cash','pay-pos','pay-qpay','pay-debt'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('debt-client-wrap').style.display='none';
+  document.getElementById('pay-remaining').textContent='₮0';
+  document.getElementById('pay-remaining').className='pay-rem-value zero';
+  saveState();
+  showToast('✅ '+fmt(total)+' — Борлуулалт амжилттай!','success');
+}
+
+// ===================== ХАРИЛЦАГЧ =====================
+function renderClients(){
+  const list=document.getElementById('client-list');
+  if(!S.clients.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-text">Харилцагч байхгүй</div></div>';return;}
+  list.innerHTML=S.clients.map(c=>`
+    <div class="client-row">
+      <div class="client-avatar">${c.name.charAt(0)}</div>
+      <div class="client-info"><div class="client-name">${c.name}</div><div class="client-phone">${c.phone||'—'}</div></div>
+      <div style="text-align:right;">
+        <div class="client-debt ${c.debt>0?'has-debt':'no-debt'}">${c.debt>0?fmt(c.debt):'Авлагагүй'}</div>
+        ${c.debt>0?`<button class="btn btn-success btn-sm" style="margin-top:5px;" onclick="openPayDebt(${c.id})">Төлүүлэх</button>`:''}
+      </div>
+    </div>`).join('');
+}
+function addClient(){
+  const name=document.getElementById('c-name').value.trim();
+  const phone=document.getElementById('c-phone').value.trim();
+  const debt=parseFloat(document.getElementById('c-debt').value)||0;
+  if(!name){showToast('Нэрийг оруулна уу!','error');return;}
+  S.clients.push({id:S.nClient++,name,phone,debt});
+  closeModal('modal-add-client');renderClients();updateDebtClientSelect();saveState();
+  showToast('✅ Харилцагч нэмэгдлээ!','success');
+  document.getElementById('c-name').value='';document.getElementById('c-phone').value='';document.getElementById('c-debt').value='0';
+}
+function openPayDebt(clientId){
+  const c=S.clients.find(x=>x.id===clientId);
+  S.payDebtClientId=clientId;
+  document.getElementById('pd-name').value=c.name;
+  document.getElementById('pd-current').value=fmt(c.debt);
+  document.getElementById('pd-amount').value='';
+  openModal('modal-pay-debt');
+}
+function payDebt(){
+  const amount=parseFloat(document.getElementById('pd-amount').value);
+  if(!amount||amount<=0){showToast('Дүнг оруулна уу!','error');return;}
+  const c=S.clients.find(x=>x.id===S.payDebtClientId);if(!c)return;
+  c.debt=Math.max(0,c.debt-amount);
+  closeModal('modal-pay-debt');renderClients();renderDebt();saveState();
+  showToast('✅ '+fmt(amount)+' төлөлт бүртгэгдлээ!','success');
+}
+
+// ===================== ЗЭЭЛ =====================
+function renderDebt(){
+  const debtors=S.clients.filter(c=>c.debt>0);
+  const total=debtors.reduce((a,c)=>a+c.debt,0);
+  document.getElementById('debt-total').textContent=fmt(total);
+  document.getElementById('debt-count').textContent=debtors.length;
+  document.getElementById('debt-avg').textContent=fmt(debtors.length?total/debtors.length:0);
+  const tbody=document.getElementById('debt-body');
+  if(!debtors.length){tbody.innerHTML='<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Авлага байхгүй</div></div></td></tr>';return;}
+  tbody.innerHTML=debtors.map(c=>`<tr><td><strong>${c.name}</strong></td><td class="mono" style="color:var(--text2)">${c.phone||'—'}</td><td class="mono" style="color:var(--red);font-weight:700;">${fmt(c.debt)}</td><td><button class="btn btn-success btn-sm" onclick="openPayDebt(${c.id})">💳 Төлүүлэх</button></td></tr>`).join('');
+}
+
+// ===================== ОРЛОГО =====================
+function renderIncoming(){
+  const tbody=document.getElementById('incoming-body');
+  if(!S.incoming.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-text">Орлого байхгүй</div></div></td></tr>';return;}
+  tbody.innerHTML=S.incoming.slice().reverse().map(i=>`<tr><td class="mono" style="color:var(--text2)">${i.date}</td><td><strong>${i.productName}</strong></td><td class="mono">${i.qty}${i.unit||'м'}</td><td class="mono">${fmt(i.cost)}</td><td class="mono" style="color:var(--accent)">${fmt(i.qty*i.cost)}</td><td>${i.supplier||'—'}</td></tr>`).join('');
+}
+function addIncoming(){
+  const productId=document.getElementById('inc-product').value;
+  const qty=parseFloat(document.getElementById('inc-qty').value);
+  const cost=parseFloat(document.getElementById('inc-cost').value);
+  const supplier=document.getElementById('inc-supplier').value.trim();
+  if(!productId||!qty||!cost){showToast('Бүх талбарыг бөглөнө үү!','error');return;}
+  let p,unit;
+  if(productId.startsWith('sup_')){p=S.supplies.find(x=>x.id===parseInt(productId.replace('sup_','')));unit=p?.unit||'ш';}
+  else{p=S.products.find(x=>x.id===parseInt(productId));unit='м';}
+  if(!p)return;
+  p.stock=Math.round((p.stock+qty)*100)/100;p.cost=cost;
+  S.incoming.push({date:dateNow(),productId,productName:p.name,qty,cost,supplier,unit});
+  closeModal('modal-incoming');renderIncoming();saveState();
+  showToast('✅ +'+qty+unit+' '+p.name,'success');
+  document.getElementById('inc-qty').value='';document.getElementById('inc-cost').value='';document.getElementById('inc-supplier').value='';
+}
+
+// ===================== АЖИЛТАН =====================
+function renderStaff(){
+  const list=document.getElementById('staff-list');
+  if(!S.staff.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">Ажилтан байхгүй</div></div>';return;}
+  list.innerHTML=S.staff.map(st=>`
+    <div class="staff-card">
+      <div class="staff-avatar">${st.name.charAt(0)}</div>
+      <div class="staff-info"><div class="staff-name">${st.name}</div><div class="staff-role">${st.role||'—'} ${st.phone?'· '+st.phone:''}</div></div>
+      <div style="text-align:right;"><div class="staff-salary">${fmt(st.salary)}/сар</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Төлсөн: ${fmt(st.paidSalary||0)}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="deleteStaff(${st.id})">Устгах</button>
+    </div>`).join('');
+}
+function addStaff(){
+  const name=document.getElementById('st-name').value.trim();
+  const role=document.getElementById('st-role').value.trim();
+  const salary=parseFloat(document.getElementById('st-salary').value)||0;
+  const phone=document.getElementById('st-phone').value.trim();
+  if(!name){showToast('Нэрийг оруулна уу!','error');return;}
+  S.staff.push({id:S.nStaff++,name,role,salary,phone,paidSalary:0});
+  closeModal('modal-add-staff');renderStaff();saveState();
+  showToast('✅ Ажилтан нэмэгдлээ!','success');
+  ['st-name','st-role','st-salary','st-phone'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteStaff(id){
+  if(!confirm('Устгах уу?'))return;
+  S.staff=S.staff.filter(x=>x.id!==id);
+  renderStaff();saveState();showToast('Устгагдлаа','error');
+}
+
+// ===================== ИРЦИЙН БҮРТГЭЛ =====================
+function renderAttendance(){
+  const y=S.attendYear,m=S.attendMonth;
+  const months=['Нэгдүгээр','Хоёрдугаар','Гуравдугаар','Дөрөвдүгээр','Тавдугаар','Зургадугаар','Долдугаар','Наймдугаар','Есдүгээр','Аравдугаар','Арван нэгдүгээр','Арван хоёрдугаар'];
+  document.getElementById('attend-month-label').textContent=months[m]+' сар '+y;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('attendance-grid');
+  if(!S.staff.length){grid.innerHTML='<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">Ажилтан байхгүй</div></div>';return;}
+  grid.innerHTML=S.staff.map(st=>{
+    if(!S.attendance[st.id]) S.attendance[st.id]={};
+    const days=Array.from({length:daysInMonth},(_,i)=>{
+      const date=new Date(y,m,i+1).toLocaleDateString('mn-MN');
+      const status=S.attendance[st.id][date]||'off';
+      return`<div class="attend-day ${status}" onclick="toggleAttend(${st.id},'${date}')" title="${date}">${i+1}</div>`;
+    }).join('');
+    const worked=Object.values(S.attendance[st.id]).filter(v=>v==='work').length;
+    return`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${st.name}</span><span class="badge badge-green">${worked} өдөр</span></div><div class="attend-grid">${days}</div></div>`;
+  }).join('');
+}
+function toggleAttend(staffId,date){
+  if(!S.attendance[staffId]) S.attendance[staffId]={};
+  const cur=S.attendance[staffId][date]||'off';
+  S.attendance[staffId][date]=cur==='work'?'off':'work';
+  saveState();renderAttendance();
+}
+function changeAttendMonth(delta){
+  S.attendMonth+=delta;
+  if(S.attendMonth>11){S.attendMonth=0;S.attendYear++;}
+  if(S.attendMonth<0){S.attendMonth=11;S.attendYear--;}
+  renderAttendance();
+}
+
+// ===================== ЦАЛИН =====================
+function renderSalary(){
+  const tbody=document.getElementById('salary-body');
+  if(!S.staff.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">Ажилтан байхгүй</div></div></td></tr>';return;}
+  tbody.innerHTML=S.staff.map(st=>{
+    const y=S.attendYear,m=S.attendMonth;
+    if(!S.attendance[st.id]) S.attendance[st.id]={};
+    const worked=Object.entries(S.attendance[st.id]).filter(([date,v])=>{
+      const d=new Date(date.split('.').reverse().join('-'));
+      return d.getFullYear()===y&&d.getMonth()===m&&v==='work';
+    }).length;
+    const dailySalary=st.salary/26;
+    const calcSalary=Math.round(dailySalary*worked);
+    const paid=st.paidSalary||0;
+    const remaining=Math.max(0,calcSalary-paid);
+    return`<tr>
+      <td><strong>${st.name}</strong><br><span style="font-size:11px;color:var(--text2);">${st.role||''}</span></td>
+      <td class="mono">${fmt(st.salary)}</td>
+      <td class="mono">${worked} өдөр</td>
+      <td class="mono" style="color:var(--accent)">${fmt(calcSalary)}</td>
+      <td class="mono" style="color:var(--green)">${fmt(paid)}</td>
+      <td class="mono" style="color:${remaining>0?'var(--red)':'var(--green)'};font-weight:700;">${fmt(remaining)}</td>
+      <td>${remaining>0?`<button class="btn btn-success btn-sm" onclick="openPaySalary(${st.id},${calcSalary})">Төлөх</button>`:'<span class="badge badge-green">Дууссан</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+function openPaySalary(staffId,calcSalary){
+  const st=S.staff.find(x=>x.id===staffId);
+  S.paySalaryStaffId=staffId;
+  document.getElementById('ps-name').value=st.name;
+  document.getElementById('ps-calc').value=fmt(calcSalary);
+  document.getElementById('ps-amount').value=calcSalary-(st.paidSalary||0);
+  openModal('modal-pay-salary');
+}
+function paySalary(){
+  const amount=parseFloat(document.getElementById('ps-amount').value);
+  if(!amount||amount<=0){showToast('Дүнг оруулна уу!','error');return;}
+  const st=S.staff.find(x=>x.id===S.paySalaryStaffId);if(!st)return;
+  st.paidSalary=(st.paidSalary||0)+amount;
+  closeModal('modal-pay-salary');renderSalary();saveState();
+  showToast('✅ '+st.name+' — '+fmt(amount)+' цалин олголоо!','success');
+}
+
+// ===================== ТАЙЛАН =====================
+function renderReport(){
+  const today=dateNow();
+  const ts=S.sales.filter(s=>s.date===today);
+  const income=ts.reduce((a,s)=>a+s.total,0);
+  const cost=ts.reduce((a,s)=>a+s.cost,0);
+  document.getElementById('r-income').textContent=fmt(income);
+  document.getElementById('r-cost').textContent=fmt(cost);
+  document.getElementById('r-profit').textContent=fmt(income-cost);
+  document.getElementById('r-count').textContent=ts.length;
+  document.getElementById('r-cash').textContent=fmt(ts.reduce((a,s)=>a+(s.cash||0),0));
+  document.getElementById('r-pos').textContent=fmt(ts.reduce((a,s)=>a+(s.pos||0),0));
+  document.getElementById('r-qpay').textContent=fmt(ts.reduce((a,s)=>a+(s.qpay||0),0));
+  document.getElementById('r-debtamt').textContent=fmt(ts.reduce((a,s)=>a+(s.debtAmt||0),0));
+  const tbody=document.getElementById('report-body');
+  if(!ts.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Борлуулалт байхгүй</div></div></td></tr>';}
+  else{tbody.innerHTML=ts.map(s=>`<tr>
+    <td class="mono" style="color:var(--text2)">${s.time}</td>
+    <td>${s.items.map(i=>i.name).join(', ')}</td>
+    <td class="mono">${s.items.reduce((a,i)=>a+(i.unit==='м'?i.qty:0),0).toFixed(1)}м</td>
+    <td class="mono" style="color:var(--accent)">${fmt(s.total)}</td>
+    <td class="mono" style="color:var(--green)">${fmt(s.total-s.cost)}</td>
+    <td class="mono">${s.cash>0?fmt(s.cash):'—'}</td>
+    <td class="mono">${s.pos>0?fmt(s.pos):'—'}</td>
+    <td class="mono">${s.qpay>0?fmt(s.qpay):'—'}</td>
+    <td class="mono">${s.debtAmt>0?fmt(s.debtAmt):'—'}</td>
+  </tr>`).join('');}
+  const days=['Да','Мя','Лх','Пү','Ба','Бя','Ня'];
+  const maxV=500000;
+  document.getElementById('weekly-chart').innerHTML='<div class="chart-bar-wrap">'+days.map(d=>{const v=S.sales.length?Math.random()*maxV:0;const pct=(v/maxV*100).toFixed(0);return`<div class="chart-row"><div class="chart-label">${d}</div><div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%;background:var(--accent);">${pct>20?fmt(v):''}</div></div><div class="chart-val">${fmt(v)}</div></div>`}).join('')+'</div>';
+  const ps={};S.sales.forEach(s=>s.items.forEach(i=>{ps[i.name]=(ps[i.name]||0)+i.qty*i.price;}));
+  const sorted=Object.entries(ps).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const mx=sorted[0]?sorted[0][1]:1;
+  document.getElementById('top-chart').innerHTML=sorted.length?'<div class="chart-bar-wrap">'+sorted.map(([name,val])=>{const pct=(val/mx*100).toFixed(0);return`<div class="chart-row"><div class="chart-label">${name}</div><div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%;background:var(--green);">${pct>15?fmt(val):''}</div></div><div class="chart-val">${fmt(val)}</div></div>`}).join('')+'</div>':'<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Борлуулалт байхгүй</div></div>';
+}
+function switchTab(btn,tabId){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['tab-daily','tab-weekly','tab-top','tab-payment'].forEach(t=>{document.getElementById(t).style.display=t===tabId?'block':'none';});
+}
+
+// ===================== HELPERS =====================
+function updateSelects(){
+  const allOpts='<option value="">-- Бараа сонгох --</option>'+
+    S.products.map(p=>`<option value="${p.id}">${p.name} (м)</option>`).join('')+
+    S.supplies.map(p=>`<option value="sup_${p.id}">${p.name} (${p.unit})</option>`).join('');
+  document.getElementById('inc-product').innerHTML=allOpts;
+}
+function updateDebtClientSelect(){
+  document.getElementById('debt-client-select').innerHTML='<option value="">-- Харилцагч сонгох --</option>'+S.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});});
+document.getElementById('qty-input').addEventListener('keydown',function(e){if(e.key==='Enter')confirmQty();});
+document.getElementById('sqty-input').addEventListener('keydown',function(e){if(e.key==='Enter')confirmSQty();});
+let toastTimer;
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+function updateDate(){
+  const d=new Date();const days=['Ням','Даваа','Мягмар','Лхагва','Пүрэв','Баасан','Бямба'];
+  document.getElementById('todayDate').textContent=days[d.getDay()]+', '+d.toLocaleDateString('mn-MN');
+}
+
+// INIT
+loadState();
+updateDate();
+updateSelects();
+updateDebtClientSelect();
+renderDashboard();
+</script>
+</body>
+</html>
